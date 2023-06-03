@@ -1,50 +1,58 @@
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.options import Options
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Student Degrees</title>
+  <style>
+    table {
+      border-collapse: collapse;
+    }
+    th, td {
+      border: 1px solid black;
+      padding: 8px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Enter a value to show the table:</h2>
+  <input type="text" id="inputField">
+  <button onclick="showTable()">Show Table</button>
+  <br><br>
+  <div id="tableContainer" style="display: none;">
+    <table>
+      <tr>
+        <th>Student</th>
+        <th>Degree</th>
+      </tr>
+      <tr>
+        <td>John</td>
+        <td>Bachelor's</td>
+      </tr>
+      <tr>
+        <td>Jane</td>
+        <td>Master's</td>
+      </tr>
+      <tr>
+        <td>David</td>
+        <td>PhD</td>
+      </tr>
+      <tr>
+        <td>Sarah</td>
+        <td>Bachelor's</td>
+      </tr>
+      <tr>
+        <td>Michael</td>
+        <td>Master's</td>
+      </tr>
+    </table>
+  </div>
 
-class DataExtractor:
-    def __init__(self):
-        # Set up the Selenium driver
-        options = Options()
-        options.add_argument("--headless")
-        service = Service('path_to_chromedriver')
-        self.driver = webdriver.Chrome(service=service, options=options)
-        
-    def extract_data(self, url):
-        # Navigate to the specified URL
-        self.driver.get(url)
-        
-        # Find the table element
-        try:
-            table = self.driver.find_element(By.XPATH, "//table")
-            
-            # Extract column titles
-            column_titles = table.find_elements(By.TAG_NAME, "th")
-            column_data = [title.text.strip() for title in column_titles]
-            
-            if "invalid argument" in column_data:
-                return "No table found on the website."
-            
-            # Extract row data
-            rows = table.find_elements(By.TAG_NAME, "tr")
-            extracted_data = []
-            for row in rows:
-                cells = row.find_elements(By.TAG_NAME, "td")
-                if cells:
-                    data = {cell.text.strip() for cell in cells}
-                    if "invalid argument" not in data:
-                        extracted_data.append(data)
-            
-            return extracted_data
-        
-        except:
-            return "No table found on the website."
-        
-    def quit(self):
-        # Quit the driver and close the browser
-        self.driver.quit()
-
-d= DataExtractor()
-url = "https://www.englishclub.com/vocabulary/abc.php"
-d.extract_data(url)
+  <script>
+    function showTable() {
+      var inputValue = document.getElementById("inputField").value;
+      if (inputValue === "correct") {
+        document.getElementById("tableContainer").style.display = "block";
+      }
+    }
+  </script>
+</body>
+</html>
