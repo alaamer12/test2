@@ -1,0 +1,50 @@
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.options import Options
+
+class DataExtractor:
+    def __init__(self):
+        # Set up the Selenium driver
+        options = Options()
+        options.add_argument("--headless")
+        service = Service('path_to_chromedriver')
+        self.driver = webdriver.Chrome(service=service, options=options)
+        
+    def extract_data(self, url):
+        # Navigate to the specified URL
+        self.driver.get(url)
+        
+        # Find the table element
+        try:
+            table = self.driver.find_element(By.XPATH, "//table")
+            
+            # Extract column titles
+            column_titles = table.find_elements(By.TAG_NAME, "th")
+            column_data = [title.text.strip() for title in column_titles]
+            
+            if "invalid argument" in column_data:
+                return "No table found on the website."
+            
+            # Extract row data
+            rows = table.find_elements(By.TAG_NAME, "tr")
+            extracted_data = []
+            for row in rows:
+                cells = row.find_elements(By.TAG_NAME, "td")
+                if cells:
+                    data = {cell.text.strip() for cell in cells}
+                    if "invalid argument" not in data:
+                        extracted_data.append(data)
+            
+            return extracted_data
+        
+        except:
+            return "No table found on the website."
+        
+    def quit(self):
+        # Quit the driver and close the browser
+        self.driver.quit()
+
+d= DataExtractor()
+url = "https://www.englishclub.com/vocabulary/abc.php"
+d.extract_data(url)
